@@ -16,10 +16,13 @@ export default {
   'app.menu.developer': 'AI开发者',
   'app.menu.developer.senior': '资深',
   'app.menu.developer.junior': '初级',
+  
+  'app.menu.contract': '合约开发者',
+  'app.menu.contract.normal': '智能合约',
 
   // Top Header
   'app.header.feedback': '反馈',
   'app.header.help': '帮助',
-  'app.header.user.setting': '设置',
+  'app.header.user.account': '账号管理',
   'app.header.user.logout': '退出',
 };

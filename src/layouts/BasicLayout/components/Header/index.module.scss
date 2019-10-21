@@ -83,6 +83,11 @@ $ice-header-icon-down-color: #fff !default;
   }
 }
 
+.desc{
+  font-size: 15px;
+  color: #999;
+};
+
 @media screen and (max-width: 1199px) {
   &.iceDesignLayoutHeader {
     width: 100%;

@@ -16,11 +16,15 @@ export default {
   'app.menu.developer': 'AI Developer',
   'app.menu.developer.senior': 'Senior',
   'app.menu.developer.junior': 'Junior',
+
+  'app.menu.contract': 'Contract Developer',
+  'app.menu.contract.normal': 'Contract Developer',
+
   // Top Header
   'app.header.feedback': 'Feedback',
   'app.header.help': 'Help',
   'app.header.user.name': 'Tao',
   'app.header.user.department': 'Tech',
-  'app.header.user.setting': 'Setting',
+  'app.header.user.account': 'Account',
   'app.header.user.logout': 'Logout',
 };

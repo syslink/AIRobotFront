@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Balloon, Icon, Nav } from '@alifd/next';
+import { Balloon, Icon, Nav, Button } from '@alifd/next';
 import IceImg from '@icedesign/img';
 import Layout from '@icedesign/layout';
 import { Link } from 'react-router-dom';
@@ -13,6 +13,10 @@ import styles from './index.module.scss';
 
 function getLocaleKey(item) {
   return `app.header.${item.name}`;
+}
+
+function openAccountMgr () {
+  
 }
 
 export default function Header(props) {
@@ -66,44 +70,15 @@ export default function Header(props) {
         {/* Header 菜单项 end */}
 
         {/* 多语言选择 */}
-        <SelectLang />
-
-        {/* Header 右侧内容块 */}
-        <Balloon
-          trigger={
-            <div className={styles.iceDesignHeaderUserpannel}>
-              <IceImg
-                height={40}
-                width={40}
-                src={avatar}
-                className={styles.userAvatar}
-              />
-              <div className={styles.userProfile}>
-                <span className={styles.userName}>{name}</span>
-                <br />
-                <span className={styles.userDepartment}>{department}</span>
-              </div>
-              <Icon
-                type="arrow-down"
-                size="xxs"
-                className={styles.iconDown}
-              />
-            </div>
-          }
-          closable={false}
-          className={styles.userProfileMenu}
-        >
-          <ul>
-            <li className={styles.userProfileMenuItem}>
-              <Icon type="repair" size="small" />
-              <FormattedMessage id="app.header.user.setting" />
-            </li>
-            <li className={styles.userProfileMenuItem}>
-              <Icon type="compass" size="small" />
-              <FormattedMessage id="app.header.user.logout" />
-            </li>
-          </ul>
-        </Balloon>
+        {/* <SelectLang /> */}
+        <ul>
+          <li className={styles.userProfileMenuItem}>
+            <Icon type="repair" size="small" />
+            <Link to="/keystore">
+              <FormattedMessage id="app.header.user.account" />
+            </Link>
+          </li>
+        </ul>
       </div>
     </Layout.Header>
   );

@@ -72,7 +72,7 @@ const asideMenuConfig = [
   {
     name: 'AI Developer',
     path: '/developer',
-    icon: 'picture',
+    icon: 'code',
     children: [
       {
         name: '资深',
@@ -81,6 +81,17 @@ const asideMenuConfig = [
       {
         name: '初级',
         path: '/developer/junior',
+      },
+    ],
+  },
+  {
+    name: 'Contract Developer',
+    path: '/contract',
+    icon: 'code',
+    children: [
+      {
+        name: '合约开发',
+        path: '/contract/normal',
       },
     ],
   },
