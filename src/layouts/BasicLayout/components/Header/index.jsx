@@ -70,11 +70,13 @@ export default function Header(props) {
         <ul>
           <li className={styles.userProfileMenuItem}>
             <Icon type="repair" size="small" />
-            <Button onClick={() => Message.success('当前节点:' + hyperchain.utils.getProvider())} >节点配置</Button>            
+            <Link to='/nodeMgr'>
+            节点配置
+            </Link>           
           </li>
         </ul>
       </div>
-      
+
     </Layout.Header>
   );
 }
