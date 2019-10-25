@@ -1,7 +1,7 @@
 export default {
   // Aside Menu
-  'app.menu.dashboard': '概览',
-  'app.menu.dashboard.monitor': '最新统计',
+  'app.menu.dashboard': '总览',
+  'app.menu.dashboard.monitor': '查看&管理',
 
   'app.menu.competition': '赛事',
   'app.menu.competition.running': '进行中',
@@ -20,9 +20,14 @@ export default {
   'app.menu.contract': '合约开发者',
   'app.menu.contract.normal': '智能合约',
 
+  
+  'app.menu.keystore': '账号管理',
+
   // Top Header
   'app.header.feedback': '反馈',
   'app.header.help': '帮助',
   'app.header.user.account': '账号管理',
   'app.header.user.logout': '退出',
+  
+  'app.header.node.config': '节点配置',
 };

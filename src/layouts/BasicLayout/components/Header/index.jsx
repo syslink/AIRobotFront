@@ -1,22 +1,18 @@
 import React, { useEffect } from 'react';
-import { Balloon, Icon, Nav, Button } from '@alifd/next';
+import { Input, Icon, Nav, Button, Message, Dialog } from '@alifd/next';
 import IceImg from '@icedesign/img';
 import Layout from '@icedesign/layout';
 import { Link } from 'react-router-dom';
 import { FormattedMessage } from 'react-intl';
 import { headerMenuConfig } from '@/menuConfig';
 import stores from '@/stores/index';
-import SelectLang from '@/components/SelectLang';
+import * as hyperchain from 'hyperchain-web3';
 import Logo from '../Logo';
 
 import styles from './index.module.scss';
 
 function getLocaleKey(item) {
   return `app.header.${item.name}`;
-}
-
-function openAccountMgr () {
-  
 }
 
 export default function Header(props) {
@@ -74,12 +70,11 @@ export default function Header(props) {
         <ul>
           <li className={styles.userProfileMenuItem}>
             <Icon type="repair" size="small" />
-            <Link to="/keystore">
-              <FormattedMessage id="app.header.user.account" />
-            </Link>
+            <Button onClick={() => Message.success('当前节点:' + hyperchain.utils.getProvider())} >节点配置</Button>            
           </li>
         </ul>
       </div>
+      
     </Layout.Header>
   );
 }

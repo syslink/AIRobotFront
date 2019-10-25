@@ -10,11 +10,11 @@ export default function Dashboard() {
     <div>
       <Overview />
       <br /> <br />
-      <CompetitionList />
-      <br /> <br />
       <DevelopList />
       <br /> <br />
       <ClubList />
+      <br /> <br />
+      <CompetitionList />
     </div>
   );
 }

@@ -3,10 +3,13 @@ import pathToRegexp from 'path-to-regexp';
 
 import BigNumber from 'bignumber.js';
 import EthCrypto from 'eth-crypto';
+import {AbiCoder as EthersAbiCoder} from 'ethers/utils/abi-coder';
+import * as ethUtil from 'ethereumjs-util';
 import * as hyperchain from 'hyperchain-web3';
 import * as Constant from './constant';
-import * as ethUtil from 'ethereumjs-util';
 import { T } from './lang';
+
+let pwdInfo = '';
 /**
  * 格式化菜单数据结构，如果子菜单有权限配置，则子菜单权限优先于父级菜单的配置
  * 如果子菜单没有配置，则继承自父级菜单的配置
@@ -484,9 +487,203 @@ function getValidKeystores (authors, threshold) {
   return totalWeight < threshold ? [] : myKeystores;
 }
 
+function isObject(val) {
+  return val != null && typeof val === 'object' && Array.isArray(val) === false;
+};
+
+function parseResult(outputs, bytes) {
+  if (Array.isArray(outputs) && outputs.length === 0) {
+    throw new Error('Empty outputs array given!');
+  }
+
+  if (!bytes || bytes === '0x' || bytes === '0X') {
+      throw new Error(`Invalid bytes string given: ${bytes}`);
+  }
+
+  const ethersAbiCoder = new EthersAbiCoder()
+  const result = ethersAbiCoder.decode(outputs, bytes);
+  let returnValues = {};
+  let decodedValue;
+
+  if (Array.isArray(result)) {
+    if (outputs.length > 1) {
+      outputs.forEach((output, i) => {
+        decodedValue = result[i];
+
+        if (decodedValue === '0x') {
+          decodedValue = null;
+        }
+
+        //returnValues[i] = decodedValue;
+
+        if (isObject(output) && output.name) {
+          returnValues[output.name] = decodedValue;
+        }
+      });
+
+      return returnValues;
+    }
+
+    return result;
+  }
+
+  if (isObject(outputs[0]) && outputs[0].name) {
+    returnValues[outputs[0].name] = result;
+  }
+
+  //returnValues[0] = result;
+
+  return returnValues;
+}
+
+
+function getContractFuncInfo(contractName, funcName) {
+  let contractAbi = null;
+  let contractAddr = '';
+  switch(contractName) {
+    case Constant.AIDeveloper:
+      contractAbi = Constant.AIDeveloperABI;
+      contractAddr = Constant.AIDeveloperAddress;
+      break;
+    case Constant.RobotMgr:
+      contractAbi = Constant.RobotMgrABI;
+      contractAddr = Constant.RobotMgrAddress;
+      break;
+    case Constant.SoccerManager:
+      contractAbi = Constant.SoccerManagerABI;
+      contractAddr = Constant.SoccerManagerAddress;
+      break;
+    case Constant.Competition:
+      contractAbi = Constant.CompetitionABI;
+      contractAddr = Constant.CompetitionAddress;
+      break;
+    case Constant.EmulatePlatform:
+      contractAbi = Constant.EmulatePlatformABI;
+      contractAddr = Constant.EmulatePlatformAddress;
+      break;
+    default:
+      throw new Error('合约名' + contractName + '不存在');
+  }
+  contractAbi = JSON.parse(contractAbi);
+  const inputs = [];
+  let outputs = null;
+  for (const interfaceInfo of contractAbi) {
+    if (interfaceInfo.name == funcName) {
+      outputs = interfaceInfo.outputs;
+      for (const input of interfaceInfo.inputs) {
+        inputs.push(input.type);        
+      }
+    }
+  }
+  if (outputs == null) {
+    throw new Error('合约函数名' + contractName + '::' + funcName + '不存在');
+  }
+  return {contractAddr, inputs, outputs};
+}
+
+function genActionName(contractName, funcName, values) {
+  let actionName = contractName + '::' + funcName;
+  values.map(value => {
+    actionName += '-' + value;
+  });
+  return actionName;
+}
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+async function invokeContractFunc(contractName, funcName, values, password) {
+  const defaultAddress = global.localStorage.getItem(Constant.DefaultSelfAddress);
+  if (defaultAddress == null) {
+    throw new Error('请在账户管理页面设置默认地址');
+  }
+
+  const contractInfo = getContractFuncInfo(contractName, funcName); 
+  const privateKey = await hyperchain.account.exportPrivateKey(defaultAddress, password);
+
+  const payload = '0x' + hyperchain.utils.getContractPayload(funcName, contractInfo.inputs, values);
+  let txInfo = {'from': defaultAddress, 'to': contractInfo.contractAddr, 'payload': payload, simulate: false};
+  
+  const txHash = await hyperchain.contract.invokeContract(txInfo, privateKey);
+  console.log(contractName + '-' + funcName + ':' + txHash);
+  
+  let maxTimes = 6;
+  while(maxTimes-- > 0) {
+    try {
+      const txResultInfo = await hyperchain.transaction.getTransactionByHash(txHash);
+      console.log('txResultInfo->');
+      console.log(txResultInfo);
+      if (txResultInfo.invalid) {
+        return {success: false, message: txResultInfo.invalidMsg};
+      }
+      break;
+    } catch (error) {      
+      await sleep(500);
+    }    
+  }
+
+  maxTimes = 6;
+  while(maxTimes-- > 0) {
+    try {
+      const receipt = await hyperchain.transaction.getTransactionReceipt(txHash);
+      console.log('receipt->');
+      console.log(receipt);
+      const result = contractInfo.outputs.length > 0 ? parseResult(contractInfo.outputs, receipt.ret) : '';
+      return {success: receipt.valid, message: receipt.errorMsg, result};
+    } catch (error) {      
+      await sleep(500);
+    }    
+  }
+  throw new Error('交易执行失败，区块打包超时');
+}
+
+async function invokeConstantContractFunc(contractName, funcName, values) {
+  if (values == null) {
+    values = [];
+  }
+  const actionName = genActionName(contractName, funcName, values);
+  const contractInfo = getContractFuncInfo(contractName, funcName);  
+  const payload = '0x' + hyperchain.utils.getContractPayload(funcName, contractInfo.inputs, values);
+
+  let txInfo = {from: Constant.DefaultAddress, to: contractInfo.contractAddr, payload, simulate: true};
+  let historyTxInfo = null;
+  let txHistorySet = global.localStorage.getItem(Constant.TxHistoryFile);
+  if (txHistorySet != null) {
+    txHistorySet = JSON.parse(txHistorySet);
+    historyTxInfo = txHistorySet[actionName];
+  } else {
+    txHistorySet = {};
+  }
+  let result = null;
+  if (historyTxInfo != null) {
+    result = await hyperchain.contract.invokeContractWithoutPK(historyTxInfo);
+  } else {
+    result = await hyperchain.contract.invokeContract(txInfo, Constant.DefaultPrivateKey);    
+    txHistorySet[actionName] = txInfo;
+    global.localStorage.setItem(Constant.TxHistoryFile, JSON.stringify(txHistorySet));
+  }
+  return parseResult(contractInfo.outputs, result.ret);
+}
+
+function getDefaultAddress() {
+  const defaultAddress = global.localStorage.getItem(Constant.DefaultSelfAddress);
+  if (defaultAddress == null) {
+    throw new Error('请在账户管理页面设置默认地址');
+  }
+  return defaultAddress;
+}
+
+function checkPrefix(origin) {
+  return origin.indexOf('0x') == 0 ? origin : '0x' + origin;
+}
+
+function isEqualAddress(addressOne, addressTwo) {
+  return checkPrefix(addressOne.toLowerCase()) == checkPrefix(addressTwo.toLowerCase());
+}
+
 export { getFlatMenuData, getRouterData, formatterMenuData, hex2Bytes, bytes2Hex, str2Bytes, str2Hex,
          saveTxHash, saveTxBothFromAndTo, bytes2Number, deepClone, parsePrivateKey, checkPassword, 
          isEmptyObj, getPublicKeyWithPrefix, utf8ByteToUnicodeStr, getDataFromFile, storeDataToFile, 
          removeDataFromFile, loadKeystoreFromLS, getReadableNumber, confuseInfo, 
          getGasEarned, getValidTime, checkIpVaild, getDuration, guid, getRandomInt,
-         getValidKeystores, storeContractABI, getContractABI };
+         getValidKeystores, storeContractABI, getContractABI, isObject, parseResult,
+         invokeConstantContractFunc, invokeContractFunc, getDefaultAddress, isEqualAddress };

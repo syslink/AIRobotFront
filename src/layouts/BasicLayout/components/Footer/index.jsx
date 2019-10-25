@@ -19,7 +19,7 @@ export default function Footer() {
             className={styles.copyrightLink}
             rel="noopener noreferrer"
           >
-            ICE
+            Chainer Team
           </a>
         </div>
       </div>

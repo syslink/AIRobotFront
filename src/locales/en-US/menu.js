@@ -19,6 +19,8 @@ export default {
 
   'app.menu.contract': 'Contract Developer',
   'app.menu.contract.normal': 'Contract Developer',
+  
+  'app.menu.keystore': 'keystore',
 
   // Top Header
   'app.header.feedback': 'Feedback',
@@ -27,4 +29,7 @@ export default {
   'app.header.user.department': 'Tech',
   'app.header.user.account': 'Account',
   'app.header.user.logout': 'Logout',
+
+  'app.header.node.config': 'Node Config',
+
 };

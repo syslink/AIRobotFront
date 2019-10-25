@@ -31,56 +31,67 @@ const asideMenuConfig = [
       },
     ],
   },
+  // {
+  //   name: '赛事',
+  //   path: '/competition',
+  //   icon: 'picture',
+  //   children: [
+  //     {
+  //       name: '进行中',
+  //       path: '/competition/running',
+  //     },
+  //     {
+  //       name: '已结束',
+  //       path: '/competition/done',
+  //     },
+  //     {
+  //       name: '未开始',
+  //       path: '/competition/todo',
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'club',
+  //   path: '/club',
+  //   icon: 'calendar',
+  //   children: [
+  //     {
+  //       name: '甲级',
+  //       path: '/club/levelOne',
+  //     },
+  //     {
+  //       name: '乙级',
+  //       path: '/club/levelTwo',
+  //     },
+  //     {
+  //       name: '初创',
+  //       path: '/club/noLevel',
+  //     },
+  //   ],
+  // },
+  // {
+  //   name: 'AI Developer',
+  //   path: '/developer',
+  //   icon: 'code',
+  //   children: [
+  //     {
+  //       name: '资深',
+  //       path: '/developer/senior',
+  //     },
+  //     {
+  //       name: '初级',
+  //       path: '/developer/junior',
+  //     },
+  //   ],
+  // },
   {
-    name: '赛事',
-    path: '/competition',
-    icon: 'picture',
-    children: [
-      {
-        name: '进行中',
-        path: '/competition/running',
-      },
-      {
-        name: '已结束',
-        path: '/competition/done',
-      },
-      {
-        name: '未开始',
-        path: '/competition/todo',
-      },
-    ],
-  },
-  {
-    name: 'club',
-    path: '/club',
-    icon: 'calendar',
-    children: [
-      {
-        name: '甲级',
-        path: '/club/levelOne',
-      },
-      {
-        name: '乙级',
-        path: '/club/levelTwo',
-      },
-      {
-        name: '初创',
-        path: '/club/noLevel',
-      },
-    ],
-  },
-  {
-    name: 'AI Developer',
-    path: '/developer',
+    name: 'Account Manager',
+    path: '/keystore',
     icon: 'code',
     children: [
       {
-        name: '资深',
-        path: '/developer/senior',
-      },
-      {
-        name: '初级',
-        path: '/developer/junior',
+        name: '账号管理',
+        path: '/keystore',
       },
     ],
   },

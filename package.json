@@ -17,6 +17,7 @@
   ],
   "dependencies": {
     "@alifd/next": "^1.x",
+    "@ice/form": "^0.1.5",
     "@ice/store": "^0.1.1",
     "@icedesign/base": "^0.2.8",
     "@icedesign/container": "^1.x",
@@ -32,7 +33,7 @@
     "eth-crypto": "^1.3.2",
     "ethereumjs-util": "^6.1.0",
     "ethers": "^4.0.37",
-    "hyperchain-web3": "^1.0.5",
+    "hyperchain-web3": "^1.0.19",
     "monaco-editor": "^0.18.1",
     "node-sass": "^4.12.0",
     "prop-types": "^15.5.8",
@@ -65,7 +66,7 @@
   "scaffoldConfig": {
     "builder": "ice-scripts",
     "name": "ice-design-lite",
-    "title": "ICE Design Lite",
+    "title": "AI足球大师",
     "categories": [
       "基础模板"
     ],

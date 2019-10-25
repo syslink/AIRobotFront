@@ -14,7 +14,7 @@ import * as hyperchain from 'hyperchain-web3';
 import CellEditor from './CellEditor';
 import * as utils from '../../../../utils/utils'; 
 import { T } from '../../../../utils/lang'; 
-import { KeyStoreFile } from '../../../../utils/constant';
+import * as Constant from '../../../../utils/constant';
 import './KeyList.scss';
 
 const history = createHashHistory();
@@ -91,7 +91,7 @@ export default class KeyList extends Component {
   }
 
   loadKeyInfo = () => {
-    const keystoreInfoObj = utils.getDataFromFile(KeyStoreFile);
+    const keystoreInfoObj = utils.getDataFromFile(Constant.KeyStoreFile);
     if (keystoreInfoObj == null) {
       return;
     }
@@ -256,6 +256,10 @@ export default class KeyList extends Component {
       pwdDialogVisible: true,
     });
   }
+  setDefaultAddr = (index) => {    
+    global.localStorage.setItem(Constant.DefaultSelfAddress,'0x' + this.state.dataSource[index].address);
+    Message.success('设置成功，默认地址为：' + global.localStorage.getItem(Constant.DefaultSelfAddress));
+  }
   renderOperation = (value, index) => {
     const keyInfoObj = this.state.dataSource[index];
     if (keyInfoObj.bip32path == T(NonMnemonicGenerate)) {
@@ -308,6 +312,10 @@ export default class KeyList extends Component {
           <Button type="primary" onClick={this.cryptoInfo.bind(this, index)}>
           {T('加密/解密')}
           </Button>
+          &nbsp;&nbsp;
+          <Button type="primary" onClick={this.setDefaultAddr.bind(this, index)}>
+          {T('设为默认地址')}
+          </Button>
         </view>
       );
     }
@@ -343,7 +351,7 @@ export default class KeyList extends Component {
     return false;
   }
   addNewItem = () => {
-    const keystoreInfo = utils.getDataFromFile(KeyStoreFile);
+    const keystoreInfo = utils.getDataFromFile(Constant.KeyStoreFile);
     if (keystoreInfo == null) {
       let entropy = ethers.utils.randomBytes(16);
       let mnemonicTemp = ethers.utils.HDNode.entropyToMnemonic(entropy);
@@ -364,12 +372,12 @@ export default class KeyList extends Component {
   }
 
   hasKeyStoreFile = () => {
-    const keystoreInfo = utils.getDataFromFile(KeyStoreFile);
+    const keystoreInfo = utils.getDataFromFile(Constant.KeyStoreFile);
     return keystoreInfo != null;
   }
 
   getKeyStoreFile = () => {
-    const keystoreInfo = utils.getDataFromFile(KeyStoreFile);
+    const keystoreInfo = utils.getDataFromFile(Constant.KeyStoreFile);
     return keystoreInfo != null ? JSON.parse(keystoreInfo) : null;
   }
 
@@ -415,7 +423,7 @@ export default class KeyList extends Component {
     });
   }
   getMnemonicIndex = () => {
-    const keystoreInfo = utils.getDataFromFile(KeyStoreFile);
+    const keystoreInfo = utils.getDataFromFile(Constant.KeyStoreFile);
     if (keystoreInfo == null) {
       return 0;
     } else {
@@ -431,7 +439,7 @@ export default class KeyList extends Component {
     
     const keyList = [ initKeyInfo ];
     const keystoreInfo = { 'keyList': keyList, 'nextIndex': nextIndex };
-    utils.storeDataToFile(KeyStoreFile, keystoreInfo);
+    utils.storeDataToFile(Constant.KeyStoreFile, keystoreInfo);
   }
   checkHasDupAccount = (keystoreInfo, newKeyInfo) => {
     for(let i = 0; i < keystoreInfo.keyList.length; i++) {
@@ -442,7 +450,7 @@ export default class KeyList extends Component {
     return -1;
   }
   addAccountToKeystoreFile = (keyInfo, repalceOldOne) => {
-    const keystoreInfo = utils.getDataFromFile(KeyStoreFile);
+    const keystoreInfo = utils.getDataFromFile(Constant.KeyStoreFile);
     if (keystoreInfo == null) {
       this.initKeyStoreFile(keyInfo);
     } else {
@@ -457,7 +465,7 @@ export default class KeyList extends Component {
       }
       keystoreInfo.keyList.push(keyInfo);
       keystoreInfo.nextIndex += 1;
-      utils.storeDataToFile(KeyStoreFile, keystoreInfo);
+      utils.storeDataToFile(Constant.KeyStoreFile, keystoreInfo);
     }
     return true;
   }
@@ -495,7 +503,7 @@ export default class KeyList extends Component {
     this.encryptWallet(wallet, this.state.password, T('创建成功'));
   }
   processAction = (filterFunc, toastStr, succssFunc) => {
-    const keystoreInfo = utils.getDataFromFile(KeyStoreFile);
+    const keystoreInfo = utils.getDataFromFile(Constant.KeyStoreFile);
     const fractalKSInfo = keystoreInfo.keyList.filter(filterFunc);
     const ethersKSInfo = fractalKSInfo[0];
 
@@ -510,7 +518,7 @@ export default class KeyList extends Component {
                   });
   }
   getIndexOfFirstMnemonicAccount = () => {
-    const keystoreInfo = utils.getDataFromFile(KeyStoreFile);
+    const keystoreInfo = utils.getDataFromFile(Constant.KeyStoreFile);
     for (const index = 0;  index < keystoreInfo.keyList.length; index++) {
       if(Object.prototype.hasOwnProperty(keystoreInfo.keyList[index], 'x-ethers')) {
         return index;
@@ -551,7 +559,7 @@ export default class KeyList extends Component {
     } else if (this.state.method === ActionType.ExportKeyStoreInfo) {      
       this.processAction(item => item.address === this.state.curData.address, T('导出中...'), wallet => {
         Message.hide();
-        const keystoreInfo = utils.getDataFromFile(KeyStoreFile);
+        const keystoreInfo = utils.getDataFromFile(Constant.KeyStoreFile);
         const fractalKSInfo = keystoreInfo.keyList.filter(item => item.address === this.state.curData.address);
         const ethersKSInfo = fractalKSInfo[0];
         delete ethersKSInfo['x-ethers'];
@@ -562,12 +570,12 @@ export default class KeyList extends Component {
       this.processAction(item => item.address === this.state.curData.address, T('删除中...'), wallet => {
         Message.hide();        
         const address = this.state.curData.address;
-        const keystoreInfoObj = utils.getDataFromFile(KeyStoreFile);
+        const keystoreInfoObj = utils.getDataFromFile(Constant.KeyStoreFile);
         keystoreInfoObj.keyList = keystoreInfoObj.keyList.filter(item => item.address !== address);
         if (keystoreInfoObj.keyList.length == 0) {
-          utils.removeDataFromFile(KeyStoreFile);
+          utils.removeDataFromFile(Constant.KeyStoreFile);
         } else {
-          utils.storeDataToFile(KeyStoreFile, keystoreInfoObj);
+          utils.storeDataToFile(Constant.KeyStoreFile, keystoreInfoObj);
         }
         this.state.dataSource.splice(this.state.curDataIndex, 1);
         this.setState({ dataSource: this.state.dataSource, pwdDialogVisible: false });
@@ -634,7 +642,7 @@ export default class KeyList extends Component {
     this.processAction((item, index) => index === 0, T('原密码验证中...'), async wallet => {
       Message.success(T('原密码验证通过，开始修改密码...'));
       this.state.dataSource = [];
-      const keystoreInfoObj = utils.getDataFromFile(KeyStoreFile);
+      const keystoreInfoObj = utils.getDataFromFile(Constant.KeyStoreFile);
       const keyList = keystoreInfoObj.keyList;
       const wallets = [];
       let count = 1;
