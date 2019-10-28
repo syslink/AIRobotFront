@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Container from '@icedesign/container';
-import { Button, Input, Select } from '@alifd/next';
+import { Button, Input } from '@alifd/next';
 import * as hyperchain from 'hyperchain-web3';
+import * as Constant from '../../utils/constant';
 
 export default class NodeManager extends Component {
 
@@ -20,6 +21,7 @@ export default class NodeManager extends Component {
   }
   setNewNodeInfo = () => {
     hyperchain.utils.setProvider(this.state.nodeInfo);
+    global.localStorage.setItem(Constant.NodeInfo, this.state.nodeInfo);
     this.setState({nodeInfo: hyperchain.utils.getProvider()});
   }
   render() {
@@ -35,7 +37,7 @@ export default class NodeManager extends Component {
             size="medium"
             defaultValue=""
             hasLimitHint/>
-            <p/>
+          &nbsp;&nbsp;
           <Button onClick={this.setNewNodeInfo.bind(this)}>设置新节点</Button>
         </Container>
     );

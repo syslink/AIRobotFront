@@ -5,6 +5,7 @@ export const ContractABIFile = 'contractABI';
 export const ContractNameFile = 'contractName';
 export const TxHistoryFile = 'txHistory';
 export const DefaultSelfAddress = 'defaultAddr';
+export const NodeInfo = 'nodeInfo';
 
 export const PublicKeyPrefix = '0x04';
 export const ChainIdPrefix = 'ChainProvider-';
