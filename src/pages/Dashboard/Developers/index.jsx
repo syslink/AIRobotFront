@@ -66,7 +66,7 @@ export default class Index extends Component {
       const defaultAddress = utils.getDefaultAddress();
       for (let devInfo of this.state.devInfoList) {
         if (defaultAddress.toLowerCase() == devInfo.owner.toLowerCase()) {
-          Message.error('同一地址，不可重复注册开发者');
+          Message.error('您已经注册开发者' + devInfo.name +  ',不可重复注册开发者');
           return;
         }
       }
@@ -214,7 +214,7 @@ export default class Index extends Component {
   onAddRobotSubmit = (values) => {
     this.state.callbackFunc = () => {
       utils.invokeContractFunc(Constant.RobotMgr, 'createRobot', 
-      [values.aiProcedureId, values.bodyImageUrl], this.state.password).then(result => {
+      [values.aiProcedureId, values.name, values.bodyImageUrl], this.state.password).then(result => {
         result.success ? Message.success('添加成功') : Message.error('添加失败:' + result.message);
         if (result.success) {
           const id = result.robotId;
@@ -353,12 +353,13 @@ export default class Index extends Component {
           >
           <Form 
             onSubmit={this.onAddRobotSubmit}
-            layout={{labelCol: 2, wrapperCol: 8}}         
+            layout={{labelCol: 3, wrapperCol: 8}}         
           >
             {formCore => {
               this.handleSubmit = formCore.submit.bind(formCore);
               return (
                 <div>
+                  <Field name="name" label="机器人名称：" component={Input} autoFocus placeholder="请输入机器人的名称" />
                   <Field name="aiProcedureId" label="AI程序：" component={Select} dataSource={this.state.aiProcedureSelectData} placeholder="请选择需要绑定到机器人的AI程序" />
                   <Field name="bodyImageUrl" label="外观地址：" component={Input} placeholder="机器人对外显示的形象图片" />
                 </div>

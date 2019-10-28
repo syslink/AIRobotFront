@@ -985,7 +985,7 @@ export default class KeyList extends Component {
           title={T("输入钱包密码")}
           footerAlign="center"
         >
-          <Input hasClear
+          <Input hasClear autoFocus
             htmlType="password"
             onChange={this.handlePasswordChange.bind(this)}
             style={{ width: 400 }}
@@ -1090,7 +1090,7 @@ export default class KeyList extends Component {
           title={T("导入助记词")}
           footerAlign="center"
         >
-          <Input hasClear multiple
+          <Input.TextArea hasClear autoHeight
             onChange={this.handleMnemonicChange.bind(this)}
             style={{ width: 500 }}
             addonBefore={T("助记词")}
@@ -1133,12 +1133,11 @@ export default class KeyList extends Component {
           title={T("导入Keystore信息")}
           footerAlign="center"
         >
-          <Input hasClear multiple
+          <Input.TextArea hasClear autoHeight={{minRows: 3, maxRows: 5}}
             onChange={this.handleKeystoreChange.bind(this)}
             style={{ width: 500 }}
-            addonBefore={T("Keystore信息")}
+            placeholder={T("Keystore信息")}
             size="medium"
-            rows='8'
             defaultValue=''
             onPressEnter={this.onImportKeystoreOK}
           />
@@ -1168,9 +1167,8 @@ export default class KeyList extends Component {
           onCancel={this.onMnemonicClose}
           onClose={this.onMnemonicClose}
         >
-          <Input multiple
+          <Input.TextArea autoHeight
             readOnly
-            rows='4'
             value={this.state.mnemonicWords}
           />
           <p />
@@ -1185,7 +1183,7 @@ export default class KeyList extends Component {
           onCancel={this.onReMnemonicClose}
           onClose={this.onReMnemonicClose}
         >
-          <Input multiple
+          <Input.TextArea autoHeight={{minRows: 3, maxRows: 5}}
             readOnly
             style={{ width: 350 }}
             rows='4'
@@ -1203,10 +1201,9 @@ export default class KeyList extends Component {
           onCancel={this.onSignClose}
           onClose={this.onSignClose}
         >
-          <Input multiple
-            addonBefore={T("交易信息")}
+          <Input.TextArea autoHeight={{minRows: 5, maxRows: 8}}
+            placeholder={T("待签名信息")}
             style={{ width: 350 }}
-            rows='5'
             onChange={this.onTxInfoChange.bind(this)}
           />
           <p />
@@ -1237,19 +1234,19 @@ export default class KeyList extends Component {
           onCancel={this.onCryptoClose}
           onClose={this.onCryptoClose}
         >
-          <Input multiple hasClear
+          <Input.TextArea hasClear
             addonBefore={T("加/解密信息")}
             style={{ width: 350 }}
-            rows='5'
+            autoHeight={{minRows: 5, maxRows: 8}}
             onChange={this.onCryptoInfoChange.bind(this)}
           />
           <p />
           <p />
-          <Input multiple hasClear
+          <Input.TextArea hasClear
             style={{ width: 350 }}
             addonBefore={T("加/解密结果")}
             size="medium"
-            rows='3'
+            autoHeight={{minRows: 3, maxRows: 5}}
             value={this.state.cryptoResult}
             onChange={this.onCryptoResultChange.bind(this)}
           />

@@ -122,6 +122,7 @@ class FeatureItem extends Component {
         >        
           <Table dataSource={this.state.robotList} hasBorder={false}>
             <Table.Column width={60} title="ID" dataIndex="id" cell={this.renderNum.bind(this)}/>
+            <Table.Column width={120} title='名称' dataIndex="name"/>
             <Table.Column width={120} title='头像' dataIndex="bodyImageUrl" cell={this.renderImgUrl.bind(this)}/>
             <Table.Column width={120} title='绑定的AI程序' dataIndex="aiProcedureInfo"/>
             <Table.Column width={120} title='当前状态' dataIndex="status" cell={this.renderStatus.bind(this)}/>

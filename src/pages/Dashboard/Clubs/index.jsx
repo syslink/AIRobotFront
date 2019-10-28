@@ -119,7 +119,8 @@ export default class Index extends Component {
       
       const result = await utils.invokeConstantContractFunc(Constant.RobotMgr, 'getOwnershipRobotIds', [defaultAddress]);
       for (let robotId of result.robotIds) {
-        this.state.myRobotList.push({label: robotId.toNumber(), value: robotId.toNumber()});
+        const robotInfo = await utils.invokeConstantContractFunc(Constant.RobotMgr, 'robots', [robotId.toNumber()]);
+        this.state.myRobotList.push({label: robotInfo.name, value: robotId.toNumber()});
       }
 
       for (let teamInfo of this.state.teamList) {

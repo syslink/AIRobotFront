@@ -650,6 +650,12 @@ async function invokeConstantContractFunc(contractName, funcName, values) {
   if (txHistorySet != null) {
     txHistorySet = JSON.parse(txHistorySet);
     historyTxInfo = txHistorySet[actionName];
+    if (historyTxInfo != null) {
+      const timeSpan = new BigNumber(new Date().getTime()).shiftedBy(6).minus(new BigNumber(historyTxInfo.timestamp));
+      if (timeSpan.isGreaterThan(new BigNumber(12 * 3600 * 1000).shiftedBy(6))) {
+        historyTxInfo = null;
+      }
+    }
   } else {
     txHistorySet = {};
   }
